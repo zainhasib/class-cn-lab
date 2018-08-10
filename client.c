@@ -8,7 +8,7 @@
 #include<limits.h>
 #include<arpa/inet.h>
 
-#define PORT 8080
+#define PORT 5000
 #define MAXLINE 1024
 
 int main(int c, char ** args) {
@@ -31,24 +31,22 @@ int main(int c, char ** args) {
         printf("Socket ID: %d\n", sock);
     }
 
-    // Get Message
-    printf("Please enter a message \n");
-    fgets(hello, MAXLINE, stdin);
-    int length_buf = strlen(hello);
-
     if(bind(sock, (struct sockaddr *) &serverAddr, addlen) < 0) {
         perror("Bind Failed");
         exit(EXIT_FAILURE);
     }
 
+    int t;
+    // Get Message
+    printf("Please enter a message \n");
+    fgets(hello, MAXLINE, stdin);
+    int length_buf = strlen(hello);
+
+
     if(sendto(sock, (const char *)hello, length_buf, MSG_CONFIRM, (struct sockaddr *)&serverAddr, addlen) < 0) {
         perror("Send to Failed");
         exit(EXIT_FAILURE);
     }
-
-    length_get = recvfrom(sock, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&serverAddr, &len);
-    buffer[length_get] = '\0';
-    printf("Server : %s\n", buffer);
 
     close(sock);
 
