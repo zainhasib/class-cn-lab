@@ -8,14 +8,13 @@
 #include<limits.h>
 #include<arpa/inet.h>
 
-
 int main(int c, char ** args) {
 
     struct sockaddr_in serverAddr;
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(4500);
-
+    
     char buffer[1024];
     char hello[1024];
     int opt = 1;
@@ -35,12 +34,19 @@ int main(int c, char ** args) {
     }
 
     if(bind(sock, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
-    length_get = recvfrom(sock, (char *)buffer, 1024, 0, (struct sockaddr *)&serverAddr, &len);
         perror("Bind Failed");
         exit(EXIT_FAILURE);
     }
 
+    length_get = recvfrom(sock, (char *)buffer, 1024, 0, (struct sockaddr *)&serverAddr, &len);
     buffer[length_get] = '\0';
+    char * message_rev;
+    int i;
+    message_rev = (char *) malloc(sizeof(char) * length_get);
+    for(i=0; i<length_get; i++) {
+        message_rev[i] = buffer[length_get-i-1];
+    }
+    message_rev[length_get] = '\0';
     printf("Server : %s\n", buffer);
 
     close(sock);

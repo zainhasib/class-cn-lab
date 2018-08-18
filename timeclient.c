@@ -6,11 +6,25 @@
 #include<netinet/in.h>
 #include<string.h>
 #include<arpa/inet.h>
+#include<time.h>
 
 #define PORT 8090
 
-int main(int c, char ** args) {
+char * getCurrentTime() {
+    time_t rawtime;
+    struct tm * timeinfo;
 
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    char * presentTime;
+    presentTime = (char *) calloc(sizeof(char), 100);
+    sprintf(presentTime, "Date is %d %d %d and Time %d:%d", timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, timeinfo->tm_hour, timeinfo->tm_min);
+
+    return presentTime;
+}
+
+int main(int c, char ** args) {
+    getCurrentTime();
     struct sockaddr_in serverAddr;
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     serverAddr.sin_family = AF_INET;
@@ -39,15 +53,19 @@ int main(int c, char ** args) {
         exit(EXIT_FAILURE);
     }
 
-    int t;
-    // Get Message
-    printf("Please enter a message \n");
-    fgets(hello, 1024, stdin);
-    int length_buf = strlen(hello);
+    while(1) {
+        int t;
+        // Get Message
+        char * timenow;
+        timenow = (char *) calloc(sizeof(char), 100);
+        timenow = getCurrentTime();
 
-    if(sendto(sock, (const char *)hello, length_buf, 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
-        perror("Send to Failed");
-        exit(EXIT_FAILURE);
+        if(sendto(sock, (const char *)timenow, strlen(timenow), 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
+            perror("Send to Failed");
+            exit(EXIT_FAILURE);
+        }
+
+        sleep(5);
     }
 
     close(sock);
