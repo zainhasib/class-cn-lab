@@ -28,33 +28,28 @@ int main()
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = 5600;
     serverAddr.sin_family = AF_INET;
+    sizeAddr = sizeof(serverAddr);
 
-    /*clientAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    clientAddr.sin_port = htons(6600);
-    clientAddr.sin_family = AF_INET;*/
-    sizeAddr = sizeof(clientAddr);
 
-    if(bind(sock, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
+    clientAddr.sin_addr.s_addr = INADDR_ANY;
+    clientAddr.sin_port = 6600;
+    clientAddr.sin_family = AF_INET;
+
+    if(bind(sock, (struct sockaddr *)&clientAddr, sizeof(clientAddr)) < 0) {
         perror("Bind Error");
         exit(EXIT_FAILURE);
     }
 
-    if(listen(sock, 5) < 0) {
-        perror("Listen");
+    if(connect(sock, (struct sockaddr *)&serverAddr, (socklen_t)sizeAddr) < 0) {
+        perror("Connect");
         exit(EXIT_FAILURE);
     }
 
-    if(newsock = accept(sock, (struct sockaddr *)&clientAddr, (socklen_t *)&sizeAddr) < 0) {
-        perror("Accept");
-        exit(EXIT_FAILURE);
-    }
-    printf("%d\n", newsock);
-    if((readFlag = recv(newsock, buffer, 1024, 0)) < 0 ){
-        perror("Recv");
-        exit(-1);
-    }
-    printf("%d\n", readFlag);
-    printf("%s\n", buffer);
+    //fgets(sendBuffer, 1024, stdin);
+    
+    int k=send(sock, "Hello" , strlen("Hello"), 0);
+    printf("%d\n", k);
+    printf("Message sent\n");
 
     return 0;
 }
