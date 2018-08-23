@@ -20,10 +20,10 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    /*if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
+    if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         perror("SetSockOpt Error");
         exit(EXIT_FAILURE);
-    }*/
+    }
 
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = 5600;
@@ -45,10 +45,10 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    //fgets(sendBuffer, 1024, stdin);
+    printf("Enter your message : ");
+    fgets(sendBuffer, 1024, stdin);
     
-    int k=send(sock, "Hello" , strlen("Hello"), 0);
-    printf("%d\n", k);
+    int k=send(sock, sendBuffer , strlen(sendBuffer), 0);
     printf("Message sent\n");
 
     return 0;
